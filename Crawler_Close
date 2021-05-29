@@ -34,14 +34,13 @@ def closing_quotation(date_time):
 
 
 # 每次皆取5日資訊
-times = 0
-plus = 0
+times, plus = 0, 0
 while(times < 5):
     date_time = datetime.datetime.now() - datetime.timedelta(days=plus)
     date_time = ''.join(str(date_time).split(' ')[0].split('-'))
     try:
         closing_quotation(date_time)
-        print(date_time + "Finished")
+        print(date_time + "Finished Download")
         plus += 1
         times += 1
     except:
@@ -49,16 +48,15 @@ while(times < 5):
 
 
 # 繪製圖形曲線
-close_list = []
-
 
 def draw(date_time):
     tem = pd.read_csv(date_time + "_Closing_Quotation", index_col=0)
-    close_list.append(int(''.join(tem["成交金額(元)"][0].split(','))))
+    close_list.append(
+        int(int(''.join(tem["成交金額(元)"][0].split(',')))/1_000_000_000))
 
 
-times = 0
-plus = 0
+times, plus = 0, 0
+close_list = []
 while(times < 5):
     date_time = datetime.datetime.now() - datetime.timedelta(days=plus)
     date_time = ''.join(str(date_time).split(' ')[0].split('-'))
@@ -68,9 +66,11 @@ while(times < 5):
         times += 1
     except:
         plus += 1
-plt.figure(figsize=(5, 5))
-plt.plot(close_list, marker='o')
+plt.figure(figsize=(5, 7.5))
+plt.plot(close_list, marker='o', c='r')
+plt.title("Closing Quotation in 5 Days  (Unit: Billion)")
 plt.xticks(np.arange(5))
 for x, y in zip(np.arange(5), close_list):
     plt.annotate(y, (x, y), xytext=(0, 10),
                  textcoords='offset points', ha='center')
+plt.show()
