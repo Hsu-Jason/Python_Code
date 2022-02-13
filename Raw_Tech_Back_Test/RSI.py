@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import warnings
 from utility import *
+import glob
 warnings.filterwarnings('ignore')
 
 def smma(series, n):
@@ -82,13 +83,13 @@ def plot(new, ticker):
     plt.grid(True)
     plt.show()
 
-def main():
+def main(name):
+    model = "Train" if "Train" in name else "Test"
     ticker = "TXF"
     rsi_up = 60
     rsi_down = 45
     slicer = 141
-    # df = pd.read_csv('./Data/TXF_2012-01-01_2019-12-31_With_Night_15M.csv')
-    df = pd.read_csv('./Data/TXF_2020-01-01_2021-07-31_With_Night_15M.csv')
+    df = pd.read_csv(name)
     df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
     df['Date'] = pd.to_datetime(df['Date'])
     df.set_index('Date', inplace=True)
@@ -99,7 +100,12 @@ def main():
 
     portfolio_ = portfolio_mine(new)
     performance_list = performance_mine(portfolio_)
+    portfolio_.to_csv("./usstock_draw/RSI_" + model + ".csv")
 
 if __name__ == '__main__':
-    main()
+    file_name = glob.glob("./Data/TXF_20*")
+    for name in file_name:
+        main(name)
+    # if you wanna use the code to concat
+    concat_dataframe("RSI")
 

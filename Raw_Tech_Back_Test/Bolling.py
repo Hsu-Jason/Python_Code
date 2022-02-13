@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import copy
+import pandas as pd
 from utility import *
 import warnings
+import glob
 warnings.filterwarnings("ignore")
 
 
@@ -41,7 +43,7 @@ def signal_generation_mine(data, method):
     return df
 
 
-def plot_mine(new, ticker):
+def plot_mine(new, ticker, model):
     # the first plot is the actual close price with long/short signal_position
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -54,7 +56,7 @@ def plot_mine(new, ticker):
 
     plt.legend(loc='best')
     plt.grid(True)
-    plt.title('Positions')
+    plt.title('Positions ' + model)
 
     plt.show()
 
@@ -62,8 +64,8 @@ def plot_mine(new, ticker):
     ax = fig.add_subplot(111)
 
     ax.plot(new['Close'], label=ticker)
-    ax.plot(new['lower band'])
-    ax.plot(new['upper band'])
+    ax.plot(new['lower band'], label = 'lower band')
+    ax.plot(new['upper band'], label = 'upper band')
 
     plt.legend(loc='best')
     plt.title('Bollinger bands')
@@ -71,21 +73,25 @@ def plot_mine(new, ticker):
     plt.show()
 
 
-def main():
-    global new, portfolio_, performance_list, df
+def main(name):
+    model = "Train" if "Train" in name else "Test"
     slicer = 281
     ticker = 'TXF'
-    #     df = pd.read_csv('TXF_2012-01-01_2019-12-31_With_Night_15M.csv')
-    df = pd.read_csv('./Data/TXF_2020-01-01_2021-07-31_With_Night_15M.csv')
+    df = pd.read_csv(name)
     df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
     df.reset_index(inplace=True)
     new = signal_generation_mine(df, bollinger_bands)
     new = new[slicer:]
-    plot_mine(new, ticker)
+    plot_mine(new, ticker, model)
     new['Date'] = pd.to_datetime(new['Date'])
     new.set_index('Date', inplace=True)
     portfolio_ = portfolio_mine(new)
     performance_list = performance_mine(portfolio_)
-
+    portfolio_.to_csv("./usstock_draw/Bolling_" + model + ".csv")
+    return portfolio_
 if __name__ == '__main__':
-    main()
+    file_name = glob.glob("./Data/TXF_20*")
+    for name in file_name:
+        main(name)
+    # if you wanna use the code to concat
+    concat_dataframe("Bolling")

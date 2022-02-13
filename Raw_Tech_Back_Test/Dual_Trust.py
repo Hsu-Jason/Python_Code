@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import warnings
 from utility import *
+import glob
 warnings.simplefilter('ignore')
 
 
@@ -47,9 +48,8 @@ def plot(new, ticker):
     plt.title('Positions')
     plt.show()
 
-def main():
-    global stdate, eddate, ticker, slicer, new, performance_list, portfolio_
-
+def main(name):
+    model = "Train" if "Train" in name else "Test"
     # Adjust parameters
     cycle = 10
     ks = 1
@@ -58,8 +58,7 @@ def main():
     a_short = 1.006
     slicer = 11
     ticker = 'TXF'
-    # df = pd.read_csv('./Data/TXF_2012-01-01_2019-12-31_With_Night_15M.csv')
-    df = pd.read_csv('./Data/TXF_2020-01-01_2021-07-31_With_Night_15M.csv')
+    df = pd.read_csv(name)
     df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
     df['Date'] = pd.to_datetime(df['Date'])
     df.set_index('Date', inplace=True)
@@ -75,6 +74,10 @@ def main():
     plot(new, ticker)
     portfolio_ = portfolio_mine(new)
     performance_list = performance_mine(portfolio_)
-
+    portfolio_.to_csv("./usstock_draw/Dual_Trust_" + model + ".csv")
 if __name__ == '__main__':
-    main()
+    file_name = glob.glob("./Data/TXF_20*")
+    for name in file_name:
+        main(name)
+    # if you wanna use the code to concat
+    concat_dataframe("Dual_Trust")
