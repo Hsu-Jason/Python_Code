@@ -27,6 +27,9 @@ python Bolling.py Dual_Trust.py MACD.py Parabolic SAR.py RSI.py
 python main()
 ```
 
+![](./Raw_Tech_Back_Test/Total_Performance.png)
+
+
 ---
 ### Stock
 This project is to crawl the TWSE data to analyse
