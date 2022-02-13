@@ -1,11 +1,12 @@
 import matplotlib.pyplot as plt
 import warnings
 from utility import *
+import glob
 warnings.filterwarnings('ignore')
 
 
 # Simple moving average
-def macd(signals):
+def macd(signals,ma1,ma2):
     signals['ma1'] = signals['Close'].rolling(window=ma1, min_periods=1, center=False).mean()
     signals['ma2'] = signals['Close'].rolling(window=ma2, min_periods=1, center=False).mean()
     signals['DIF'] = signals['ma1'] - signals['ma2']
@@ -14,8 +15,8 @@ def macd(signals):
     return signals
 
 
-def signal_generation(df, method):
-    signals = method(df)
+def signal_generation(df, method,ma1,ma2):
+    signals = method(df,ma1,ma2)
     signals['positions'] = 0
 
     condition_long = np.logical_and(signals['OSC'] >= 0, signals['OSC'].shift() < 0)  # OSC Up to 0, Long Way
@@ -54,26 +55,29 @@ def plot(new, ticker):
     plt.title('Positions')
 
     plt.show()
-def main():
-    global ma1, ma2, stdate, eddate, ticker, slicer, new, performance_list, portfolio_
-
+def main(name):
+    model = "Train" if "Train" in name else "Test"
     ticker = 'TXF'
     ma1 = 140  # W = 1 7天
     ma2 = 500  # W = 4 25天
     slicer = 501
 
-    df = pd.read_csv("./Data/TXF_2012-01-01_2019-12-31_With_Night_15M.csv")  # 30分資料
-    #     df = pd.read_csv("./Data/TXF_2020-01-01_2021-07-31_With_Night_15M.csv")  # 30分資料
+    df = pd.read_csv(name)
     df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
     df['Date'] = pd.to_datetime(df['Date'])
     df.set_index('Date', inplace=True)
-    new = signal_generation(df, macd)
+    new = signal_generation(df, macd,ma1,ma2)
     new = new[slicer:]
 
     plot(new, ticker)
     portfolio_ = portfolio_mine(new)
     performance_list = performance_mine(portfolio_)
+    portfolio_.to_csv("./usstock_draw/MACD_" + model + ".csv")
 
 
 if __name__ == '__main__':
-    main()
+    file_name = glob.glob("./Data/TXF_20*")
+    for name in file_name:
+        main(name)
+    # if you wanna use the code to concat
+    concat_dataframe("MACD")
