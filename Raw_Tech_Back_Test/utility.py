@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import glob
 # 改版 邏輯
 def computeRevenue(data):
     Revenue = data["total_asset"].iloc[-1] - data["total_asset"].iloc[0]
@@ -261,3 +261,15 @@ def portfolio_mine(data, initially=368_000, positions=1):
     data['asset_diff'] = data['total_asset'].diff()
     data['returns'] = data['total_asset'].pct_change()
     return data
+
+def concat_dataframe(path):
+    file_name = glob.glob("./usstock_draw/" + path + "*")
+    data = []
+    for name in file_name:
+        data_frmae = pd.read_csv(name)
+        data.append(data_frmae)
+    data = pd.concat(data)
+    data.set_index("Date", inplace=True)
+    data.drop(columns=['index'], inplace=True)
+    data.sort_index()
+    data.to_csv("./usstock_draw/" + path + ".csv")
