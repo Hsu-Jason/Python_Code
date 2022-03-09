@@ -76,3 +76,22 @@ Could Directly Run main.py
 ```
 python main()
 ```
+
+---
+### Option_Strategy
+This code is for my intern in trading organization. I only show some of the development with one data because I'm not intend to let the viewers to run this code.  
+In this code, I use statistic ways to find out some pattern for options strategy. Including Time, Strike Price and Premium.  
+There are some key point.
+1. I exclude weeks that don't have full trading days which is not 5 days.
+2. I use convolutional way to let my strategy more robust.
+3. I'm not using the AI / ML / DL model, only use statistic
+4. I use heatmap to demonstate result.
+
+#### Result - Heatmap
+![](./Option_Strategy/2017_2020_Test_Heatmap.png)
+
+#### REsult - Payoff
+![](./Option_Strategy/Test_Payoff.png)
+
+
+
