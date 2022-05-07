@@ -90,7 +90,7 @@ There are some key point.
 #### Result - Heatmap
 ![](./Option_Strategy/2017_2020_Test_Heatmap.png)
 
-#### REsult - Payoff
+#### Rsult - Payoff
 ![](./Option_Strategy/Test_Payoff.png)
 
 
